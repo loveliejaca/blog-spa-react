@@ -1,0 +1,53 @@
+*, ::before, ::after {
+    box-sizing: inherit;
+    border-style: solid;
+    border-width: 0;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 15px;
+  font-family: "Montserrat", "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", serif;
+  width: 100%;
+  color: #101010;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.l-wrapper {
+  display: block;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.l-header {
+  display: block;
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+
+.l-main {
+  padding-bottom: 150px;
+  width: 100%;
+}
+
+.l-container {
+  display: block;
+  max-width: calc(1120px + 18%);
+  margin: 0 auto;
+  padding: 0px 9%;
+  width: 100%;
+  box-sizing: border-box
+}
+
+
+.l-footer {
+  background: #292929;
+}
