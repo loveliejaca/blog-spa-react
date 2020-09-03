@@ -1,11 +1,13 @@
 .auth {
   background-color: #fff;
   display: block;
-  height: 667px;
-  position: absolute;
-  top: 100px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
   left: 0;
   width: 100%;
+  padding-top: 100px;
+  overflow: auto;
 }
 
 .auth__inner {

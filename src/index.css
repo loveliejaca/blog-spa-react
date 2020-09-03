@@ -22,12 +22,15 @@ code {
   display: block;
   overflow: hidden;
   position: relative;
+  padding-top: 100px;
   width: 100%;
 }
 
 .l-header {
+  background-color: #fff;
   display: block;
-  position: relative;
+  position: fixed;
+  top: 0;
   width: 100%;
   z-index: 1;
 }

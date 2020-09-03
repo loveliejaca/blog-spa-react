@@ -6,6 +6,8 @@
   max-width: calc(1120px + 18%);
   margin: 0 auto;
   padding: 0px 9%;
+  position: relative;
+  z-index: 10;
 }
 
 .header__logo {
@@ -184,6 +186,7 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   border-bottom: 1px solid #101010;
+  background: transparent;
 }
 
 .btn-post:not(:last-child) {

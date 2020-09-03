@@ -1,8 +1,10 @@
 import React from 'react';
 import '../assets/css/breadcrumbs.css';
-
+import { Link } from "react-router-dom";
 
 function Breadcrumbs( props ) {
+	const currentPage = props.currentPage;
+	console.log("props", props);
 	return (
 		<div className="breadcrumbs">
 			<div className="breadcrumbs__inner">
@@ -13,7 +15,7 @@ function Breadcrumbs( props ) {
 						</a>
 					</li>
 					<li className="breadcrumbs__item">
-						<span className="breadcrumbs__link">サンプルテキストサンプル ルテキストサンプルテキストサンプルテキストサンプル ルテキスト</span>
+						<span className="breadcrumbs__link">{currentPage}</span>
 					</li>
 				</ul>
 			</div>

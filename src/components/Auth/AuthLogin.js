@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -9,31 +9,46 @@ import UserApi from '../../http/api/user';
 import userActions from '../../store/actions/userActions';
 
 function AuthLogin( props ) {
-  const [isEmpty, setIsEmpty] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
 
-  const [input, setInput] = useState({email: '', password: ''});
+  const [isEmpty, setIsEmpty] = useState(false);
+
   const {userActions, reduxUserData, handleClick} = props;
   const { user } = reduxUserData;
 
-  let data = null;
+  let token = JSON.parse(localStorage.getItem('token')) || '';
 
   async function authenticate() {
-    let data = await UserApi.authenticateUser(email, password);
-    userActions.userLogin(data);
+    let result = await UserApi.authenticateUser(form.email, form.password);
+    userActions.userLogin(result);
+
+    localStorage.setItem('token', JSON.stringify(result));
+    console.log("--- crash", user);
   }
+
+  const handleChange = (e) => {
+    e.persist();
+    const { id, value } = e.target;
+
+    setForm((prevState) => {
+      return { ...prevState, [id]: value.trim() };
+    });
+
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if(email === '' || password === '') {
+    if(form.email === '' || form.password === '') {
       setIsEmpty(true);
       return
     }
 
     authenticate();
-    setInput({email: '', password: ''})
+    setForm({email: '', password: ''})
   }
 
   return (
@@ -43,15 +58,17 @@ function AuthLogin( props ) {
           <label className="auth__lbl">
             Email
           </label>
-          <div className={`auth__form-input ${!input.email && isEmpty && 'is-error'}`}>
+          <div className={`auth__form-input ${!form.email && isEmpty && 'is-error'}`}>
             <input
-              value={email}
-              onChange={e => setEmail(e.target.value)}
+              type="email"
+              id="email"
+              value={form.email}
+              onChange={handleChange}
               type="text"
             />
           </div>
 
-          { !input.email && isEmpty &&
+          { !form.email && isEmpty &&
             <span className="auth__form-error"> Email is required </span>
           }
         </div>
@@ -59,15 +76,16 @@ function AuthLogin( props ) {
           <label className="auth__lbl">
             password
           </label>
-          <div className={`auth__form-input ${!input.password && isEmpty && 'is-error'}`}>
+          <div className={`auth__form-input ${!form.password && isEmpty && 'is-error'}`}>
             <input
-              value={password}
-              onChange={e => setPassword(e.target.value)}
               type="password"
+              id="password"
+              value={form.password}
+              onChange={handleChange}
             />
           </div>
 
-          { !input.password && isEmpty &&
+          { !form.password && isEmpty &&
             <span className="auth__form-error"> Password is required </span>
           }
         </div>

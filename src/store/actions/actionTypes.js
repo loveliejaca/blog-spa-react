@@ -1,5 +1,6 @@
 export const POST_LIST_REQUEST = 'POST_LIST_REQUEST'
 export const POST_DETAIL = 'POST_DETAIL'
+export const POST_COMMENTS = 'POST_COMMENTS'
 
 export const USER_LOGIN = 'USER_LOGIN'
 export const USER_REGISTER = 'USER_REGISTER'

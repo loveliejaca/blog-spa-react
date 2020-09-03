@@ -1,15 +1,16 @@
 import React from 'react';
+import Layout from '../components/layout/Layout';
 import Slider from '../components/Slider';
 import PostList from '../components/Post/PostList';
 
 function Home(props) {
   return (
-    <main className="l-main">
+    <Layout>
       <Slider/>
       <div className="l-container">
         <PostList/>
       </div>
-    </main>
+    </Layout>
   );
 }
 

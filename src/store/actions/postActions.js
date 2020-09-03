@@ -7,6 +7,10 @@ const Posts = {
 
   postDetailRecieved: (data) => {
     return { type: types.POST_DETAIL, data: data};
+  },
+
+  postCommentsRecieved: (data) => {
+    return { type: types.POST_COMMENTS, data: data};
   }
 }
 export default Posts;

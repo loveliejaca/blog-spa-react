@@ -5,111 +5,103 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import { postDate } from "../../utils/helpers.js";
+
+import Breadcrumbs from '../Breadcrumbs';
 import Comment from './Comment';
 import '../../assets/css/post.css';
 
 // API
 import PostApi from '../../http/api/post';
+// import UserApi from '../../http/api/user';
 
 // settingActions
 import postActions from '../../store/actions/postActions';
+import userActions from '../../store/actions/userActions';
 
 function PostDetail( props ) {
   const [editStatus, setEditStatus] = useState(null);
-  const postId = props.match.params.postId;
-  const {postActions, reduxPostData} = props;
+  const {history} = props;
+  const postId = props.match.params.id;
+  const {postActions, reduxPostData, reduxUserData} = props;
   const { postData } = reduxPostData;
+  const { user } = reduxUserData;
+
+  async function fetchData() {
+    let result = await PostApi.getPostDetail(postId);
+    postActions.postDetailRecieved(result);
+  }
 
   useEffect(() => {
-    async function fetchData() {
-      let data = await PostApi.getPostDetail(postId);
-      postActions.postDetailRecieved(data);
-    }
     fetchData();
-  },[postActions, postId]);
+  },[postData]);
 
 
   const handleClick = () => {
-    setEditStatus(!editStatus)
+    history.push(`/post/${postId}/edit`);
+    console.log("crash", props);
+    // setEditStatus(!editStatus)
 	}
 
-  console.log("postData", postData);
 
   if(postData === null) return null;
 
   return (
-    <div className="subpage l-container">
-      <div className="post">
-        <div className="post__btn">
-
-          {editStatus && (
-            <div className="btn-post btn-post--save">
-              <span>Save Post</span>
-            </div> )}
-
+    <React.Fragment>
+      <Breadcrumbs
+        currentPage={postData.title}
+      />
+      <div className="subpage l-container">
+        <div className="post">
+          <div className="post__btn">
             <div className="btn-post btn-post--edit" onClick={handleClick}>
-              <span>{editStatus? 'Cancel': 'Edit Post'}</span>
+              <span>Edit Post</span>
             </div>
 
-        </div>
+          </div>
 
-        <time className="post__date">
-          {moment(postData.createdAt).format('YYYY.MM.DD')}
-        </time>
+          <time
+            dateTime={postDate(postData.createdAt)}
+            className="post__date"
+          >
+            {postDate(postData.createdAt)}
+          </time>
 
-        <div className="post__title">
-          {!editStatus && (
+          <div className="post__title">
             <h2>{postData.title}</h2>
-          )}
+          </div>
 
-          {editStatus && (
-            <textarea name="comment" placeholder="Title" defaultValue={postData.title}/>
-          )}
+          <div className="post__featured">
+            <div className={`post__featured-img ${postData.image? '': 'is-noimage'}`} style={{  backgroundImage: `url(${postData.image? postData.image: require("../../assets/images/no-image.png")})`}}></div>
+          </div>
+
+          <div className="post__body">
+            {postData.content}
+          </div>
         </div>
 
-        <div className="post__featured">
-          <div className={`post__featured-img ${postData.image? '': 'is-noimage'}`} style={{  backgroundImage: `url(${postData.image? postData.image: require("../../assets/images/no-image.png")})`}}></div>
-
-          {editStatus && (
-            <div className="post__upload">
-              <input className="post__upload-input" type="file" name="files[]" id="file" data-multiple-caption="{count} files selected" multiple />
-              <label htmlFor="file"><strong>UPLOAD IMAGE</strong></label>
-            </div>
-          )}
-
-        </div>
-
-        <div className="post__body">
-
-          {!editStatus && (
-            postData.content
-          )}
-
-          {editStatus && (
-            <textarea name="content" placeholder="Content" defaultValue={postData.content}/>
-          )}
-
-        </div>
+        <Comment commentList={postData.comments} postId= {postId}/>
       </div>
-
-      <Comment commentList={postData.comments}/>
-    </div>
+    </React.Fragment>
   )
 }
 
 PostDetail.propTypes = {
-  postActions: PropTypes.object.isRequired
+  postActions: PropTypes.object.isRequired,
+  userActions: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state, ownProps) {
   return {
-    reduxPostData: state.reduxPostData
+    reduxPostData: state.reduxPostData,
+    reduxUserData: state.reduxUserData
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    postActions: bindActionCreators(postActions, dispatch)
+    postActions: bindActionCreators(postActions, dispatch),
+    userActions: bindActionCreators(userActions, dispatch)
   };
 }
 

@@ -1,14 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { withRouter } from "react-router-dom";
+
 import AuthLogin from './AuthLogin';
 import AuthRegister from './AuthRegister';
 import "../../assets/css/auth.css";
 
-function Auth() {
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+
+// // API
+// import UserApi from '../../http/api/user';
+// settingActions
+import userActions from '../../store/actions/userActions';
+
+function Auth(props) {
+  const {reduxUserData, history} = props;
+  const { user } = reduxUserData;
+
   const [isLogin, setIsLogin] = useState(false);
+
+  useEffect(() => {
+    function handleLogin() {
+      if(user) {
+				setIsLogin(false);
+			}
+    }
+
+		handleLogin();
+  }, [user]);
 
   const handleClick = () => {
     setIsLogin(!isLogin)
   }
+
+  console.log("user", user);
 
   return (
     <div className="auth">
@@ -20,5 +46,21 @@ function Auth() {
     </div>
   );
 }
+Auth.propTypes = {
+  userActions: PropTypes.object.isRequired
+};
 
-export default Auth;
+
+function mapStateToProps(state, ownProps) {
+  return {
+    reduxUserData: state.reduxUserData
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    userActions: bindActionCreators(userActions, dispatch)
+  };
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Auth));

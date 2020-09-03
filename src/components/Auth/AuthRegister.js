@@ -9,44 +9,54 @@ import UserApi from '../../http/api/user';
 import userActions from '../../store/actions/userActions';
 
 function AuthRegister( props ) {
+  const [form, setForm] = useState({
+    email: "",
+    confirmPassword: "",
+    password: "",
+  });
+
   const [isMatch, setIsMatch] = useState(true);
   const [isEmpty, setIsEmpty] = useState(false);
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPass, setConfirmPass] = useState('');
 
   const {userActions, reduxUserData, handleClick} = props;
   const { user } = reduxUserData;
 
   let userList = JSON.parse(localStorage.getItem('users')) || [];
 
-  console.log("userList", userList);
 
   async function register() {
-    let data = await UserApi.registerUser(email, password);
+    let result = await UserApi.registerUser(form.email, form.password);
 
-    console.log("register", data);
-    userActions.userRegister(data);
+    userActions.userRegister(result);
+
+    
   }
+
+  const handleChange = (e) => {
+    e.persist();
+    const { id, value } = e.target;
+
+    setForm((prevState) => {
+      return { ...prevState, [id]: value.trim() };
+    });
+
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if(email === '' || password === '') {
+    if(form.email === '' || form.password === '') {
       setIsEmpty(true);
       return
     }
 
-    if(password === confirmPass ) {
-      let newUser = email
+    if(form.password === form.confirmPassword ) {
+      let newUser = form.email
       register();
       setIsMatch(true);
-      console.log("crash", user);
 
       userList.push(newUser);
       localStorage.setItem('users', JSON.stringify(userList));
-
     } else {
       setIsMatch(false)
     }
@@ -60,14 +70,16 @@ function AuthRegister( props ) {
           <label className="auth__lbl">
             Email
           </label>
-          <div className={`auth__form-input ${!email && isEmpty && 'is-error'}`}>
+          <div className={`auth__form-input ${!form.email && isEmpty && 'is-error'}`}>
             <input
-              value={email}
-              onChange={e => setEmail(e.target.value)}
+              type="email"
+              id="email"
+              value={form.email}
+              onChange={handleChange}
               type="text"
             />
           </div>
-          { !email && isEmpty &&
+          { !form.email && isEmpty &&
             <span className="auth__form-error"> Email is required </span>
           }
         </div>
@@ -75,14 +87,15 @@ function AuthRegister( props ) {
           <label className="auth__lbl">
             password
           </label>
-          <div className={`auth__form-input ${!password && isEmpty && 'is-error'}`}>
+          <div className={`auth__form-input ${!form.password && isEmpty && 'is-error'}`}>
             <input
-              value={password}
-              onChange={e => setPassword(e.target.value)}
               type="password"
+              id="password"
+              value={form.password}
+              onChange={handleChange}
             />
           </div>
-          { !password && isEmpty &&
+          { !form.password && isEmpty &&
             <span className="auth__form-error"> Password is required </span>
           }
           { !isMatch &&
@@ -94,14 +107,15 @@ function AuthRegister( props ) {
           <label className="auth__lbl">
             Confirm password
           </label>
-          <div className={`auth__form-input ${!confirmPass && isEmpty && 'is-error'}`}>
+          <div className={`auth__form-input ${!form.confirmPassword && isEmpty && 'is-error'}`}>
             <input
-              value={confirmPass}
-              onChange={e => setConfirmPass(e.target.value)}
               type="password"
+              id="confirmPassword"
+              value={form.confirmPassword}
+              onChange={handleChange}
             />
           </div>
-          { !confirmPass && isEmpty &&
+          { !form.confirmPassword && isEmpty &&
             <span className="auth__form-error"> Password is required </span>
           }
           { !isMatch &&

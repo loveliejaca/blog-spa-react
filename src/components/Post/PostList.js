@@ -1,34 +1,43 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../assets/css/post-list.css';
 import { withRouter } from "react-router-dom";
 import moment from 'moment'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 // API
 import PostApi from '../../http/api/post';
-import UserApi from '../../http/api/user';
 
 // settingActions
 import postActions from '../../store/actions/postActions';
 import userActions from '../../store/actions/userActions';
 
-function PostList( props ) {
 
-  const { postActions, reduxPostData, userActions, reduxUserData, history } = props;
+
+function PostList( props ) {
+  //
+  // console.log("clientel", client);
+
+  const { postActions, reduxPostData, reduxUserData, history } = props;
   const { postList } = reduxPostData;
   const { user } = reduxUserData;
 
-  console.log("user", user);
+  async function fetchData(offset) {
+    let list = await PostApi.getPosts(offset);
+
+    if (offset > 0) {
+      let listCopy = _.cloneDeep(postList)
+      listCopy = listCopy.concat(list);
+      list = listCopy;
+    }
+    postActions.postsReceived(list);
+  }
 
 	useEffect(() => {
-    async function fetchData() {
-			let list = await PostApi.getPosts();
-	    postActions.postsReceived(list);
-    }
-    fetchData();
-  }, [postActions]);
+    fetchData(0);
+  }, []);
 
 	const onRouteChange = (postId) => {
     if(postId) {
@@ -36,6 +45,11 @@ function PostList( props ) {
     } else {
       history.push(`/create-new-post`);
     }
+	}
+
+
+  const handleClickMore = () => {
+    fetchData(postList.length);
 	}
 
 	if (!postList.length) return null;
@@ -75,7 +89,7 @@ function PostList( props ) {
 				{list}
 			</ul>
 
-			<div className="btn-more">
+			<div className="btn-more" onClick={() => handleClickMore()}>
 				<span>Load More</span>
 			</div>
 		</div>

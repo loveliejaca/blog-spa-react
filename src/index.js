@@ -1,19 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import {
-  BrowserRouter as Router,
-  Route
-} from "react-router-dom";
+import { BrowserRouter as Router, Route} from "react-router-dom";
 import './assets/css/reset.css';
 import './index.css';
 import App from './App';
 
 import compiler from './store/reducer/'
-
-
 
 const middleware = [
   thunkMiddleware
