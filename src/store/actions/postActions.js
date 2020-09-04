@@ -11,6 +11,11 @@ const Posts = {
 
   postCommentsRecieved: (data) => {
     return { type: types.POST_COMMENTS, data: data};
+  },
+
+  postCreatedRecieved: (data) => {
+    return { type: types.POST_CREATED, data: data};
   }
+
 }
 export default Posts;

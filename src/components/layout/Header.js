@@ -43,9 +43,9 @@ function Header( props ) {
 		}
 	}
 	const handleClickLogout = () => {
-		console.log("logout");
 		setAuthStatus(false);
 		window.localStorage.removeItem('token');
+		window.localStorage.removeItem('currentUser');
 	}
 
 	return (

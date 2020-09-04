@@ -19,8 +19,8 @@ function App() {
     <Router>
 
       <Route exact path={routes.home} component={Home} />
-      <Route exact path={routes.posts} component={Post} />
       <Route exact path={routes.postCreate} component={PostForm} />
+      <Route exact path={routes.post} component={Post} />
       <Route exact path={routes.postEdit} component={PostForm} />
     </Router>
   );

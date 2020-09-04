@@ -76,9 +76,37 @@ const PostApi = {
       }
     })
 
-
     let data = result.data ? result.data.addComment : null;
     return data;
+  },
+
+  createPost: async (data) => {
+    console.log("data", data);
+
+    let result = await client.mutate({
+      mutation: gql`
+        mutation addPost($post: PostInput) {
+          addPost(post: $post) {
+            title,
+            content,
+            image,
+            createdAt,
+            comments
+          }
+        }
+      `,
+      variables: {
+        "post" : {
+          "title" : data.title,
+          "content" : data.content,
+          "image" : data.image
+        }
+      }
+    })
+
+    console.log("crash", result);
+    // let data = result.data ? result.data.addComment : null;
+    return result;
   }
 }
 export default PostApi;

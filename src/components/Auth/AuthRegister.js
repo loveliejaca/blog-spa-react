@@ -28,8 +28,6 @@ function AuthRegister( props ) {
     let result = await UserApi.registerUser(form.email, form.password);
 
     userActions.userRegister(result);
-
-    
   }
 
   const handleChange = (e) => {

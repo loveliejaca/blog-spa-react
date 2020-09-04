@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 
 function Breadcrumbs( props ) {
 	const currentPage = props.currentPage;
-	console.log("props", props);
 	return (
 		<div className="breadcrumbs">
 			<div className="breadcrumbs__inner">

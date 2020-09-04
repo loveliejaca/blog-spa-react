@@ -1,9 +1,7 @@
 export const routes = {
   home                : '/',
-  login               : '/login',
-  register            : '/register',
-  posts               : '/post/:id',
   postCreate          : '/create-post',
+  post                : '/post/:id',
   postEdit            : '/post/:id/edit',
   pageNotFound        : '/page-not-found'
 }

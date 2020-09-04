@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { withRouter } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { withRouter , useParams} from "react-router-dom";
 import '../assets/css/post.css';
 
 // import { useUtils } from "../hooks/useUtils.js";
@@ -14,25 +14,56 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 // API
 import UserApi from '../http/api/user';
+import PostApi from '../http/api/post';
 // settingActions
-import userActions from './../store/actions/userActions';
+import postActions from '../store/actions/postActions';
+import userActions from '../store/actions/userActions';
 
-function PostNew(props) {
+function PostForm(props) {
 	const { history} = props;
+	const {postActions, reduxPostData, reduxUserData} = props;
+  const { postData } = reduxPostData;
+
+	const params = useParams();
+	const postId = params.id;
 	// const { _scrollLock } = useUtils();
+
+
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [image, setImage] = useState(null);
 
-	const [formPost, setFormPost] = useState({
-    title: "",
-    published: false,
-    body: "",
-    userId: null,
-  });
+	const [formActionPage, setFormActionPage] = useState("Create New Post");
+
 
 	const [isTitleEmpty, setIsTitleEmpty] = useState(false);
   const [isShowModal, setIsShowModal] = useState(false);
 
-	const formActionPage = "Create New Post";
+	const [formPost, setFormPost] = useState({
+    title: "",
+    content: "",
+    image: ""
+  });
+	console.log("props",formPost );
+
+	async function fetchData() {
+		if(!postId) return;
+		let result = await PostApi.getPostDetail(postId);
+		postActions.postDetailRecieved(result);
+
+		if(postData) {
+			setFormActionPage('Edit Post')
+			setFormPost({
+				title: postData.title,
+				content: postData.content,
+				image: postData.image
+			});
+		}
+	}
+
+	useEffect(() => {
+    fetchData();
+  },[postData]);
+
 
 	const handleShowErrorTite = isTitleEmpty ? (
     <p className="post-form-title-error">Title must not be empty.</p>
@@ -47,8 +78,7 @@ function PostNew(props) {
 		setFormPost((prevState) => {
 			return {
 				...prevState,
-				[e.target.id]:
-					e.target.id === "published" ? e.target.checked : e.target.value,
+				[e.target.id]: e.target.value,
 			};
 		});
 
@@ -65,43 +95,34 @@ function PostNew(props) {
 		}
 	};
 
+	async function createPost() {
+    let result = await PostApi.createPost(formPost);
+    postActions.postCreatedRecieved(result);
+
+		console.log("postData --------", postData, result);
+  }
+
 	const handleSubmitPost = (e) => {
     e.preventDefault();
+		createPost()
     console.log("save post");
   };
 
   const handleCancelPost = (e) => {
     e.preventDefault();
-    setIsShowModal(true);
-    // _scrollLock(true);
+  	setFormPost({
+			title: "",
+	    content: "",
+	    image: ""
+		})
   };
-
-  const handleModalClose = () => {
-    // _scrollLock(false);
-    setIsShowModal(false);
-  };
-
-  const handleModalOk = () => {
-    // _scrollLock(false);
-    setIsShowModal(false);
-    history.push("/");
-  };
-
-
-  const fileInput = useRef(null)
-
-  const handleClick = () => {
-    fileInput.current.click();
-  }
 
 	const ImgUpload = ({ onChange, src, }) => {
     return (
-			<div className="post__upload">
-				<label for="image-upload" className="post-form-image-label" onClick={() => handleClick()}>
-	          UPLOAD IMAGE
-	        <input id="post__upload-input" type="file" ref={fileInput}  onChange={onChange} style={{"display": "none"}}/>
-	      </label>
-			</div>
+			<label htmlFor="photo-upload" className="post__upload">
+					UPLOAD IMAGE
+				<input id="photo-upload" type="file"  onChange={onChange} style={{"display": "none"}}/>
+			</label>
     );
   }
 
@@ -109,9 +130,12 @@ function PostNew(props) {
     e.preventDefault();
     const reader = new FileReader();
     const file = e.target.files[0];
+
     reader.onloadend = () => {
       setImage(reader.result);
     }
+
+		console.log("file", reader);
 
     reader.readAsDataURL(file);
   }
@@ -135,8 +159,8 @@ function PostNew(props) {
 						</div>
 
 						<div className="post__body-container">
-							<time dateTime={postDate()} className="post__date">
-                {postDate()}
+							<time dateTime={postData ? postDate(postData.createdAt) : postDate()} className="post__date">
+                {postData ? postDate(postData.createdAt) : postDate()}
               </time>
 
 							<div className="post__title">
@@ -158,11 +182,11 @@ function PostNew(props) {
 
 							<div className="post__body">
 								<textarea
-	                id="body"
+	                id="content"
 	                placeholder="Content"
 	                className="post-form-content-textarea"
 	                onChange={handleUpdateField}
-	                value={formPost.body}
+	                value={formPost.content}
 	              />
 							</div>
 						</div>
@@ -175,21 +199,24 @@ function PostNew(props) {
 }
 
 
-PostNew.propTypes = {
+PostForm.propTypes = {
+	postActions: PropTypes.object.isRequired,
   userActions: PropTypes.object.isRequired
 };
 
 
 function mapStateToProps(state, ownProps) {
   return {
+		reduxPostData: state.reduxPostData,
     reduxUserData: state.reduxUserData
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
+		postActions: bindActionCreators(postActions, dispatch),
     userActions: bindActionCreators(userActions, dispatch)
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PostNew);
+export default connect(mapStateToProps, mapDispatchToProps)(PostForm);

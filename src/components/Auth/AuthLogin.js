@@ -19,14 +19,18 @@ function AuthLogin( props ) {
   const {userActions, reduxUserData, handleClick} = props;
   const { user } = reduxUserData;
 
-  let token = JSON.parse(localStorage.getItem('token')) || '';
+  console.log("crash", localStorage.getItem('currentUser'));
+
+  // let token = JSON.parse(localStorage.getItem('token')) || '';
+  let currentUser = JSON.parse(localStorage.getItem('currentUser')) || '';
+
 
   async function authenticate() {
     let result = await UserApi.authenticateUser(form.email, form.password);
     userActions.userLogin(result);
 
-    localStorage.setItem('token', JSON.stringify(result));
-    console.log("--- crash", user);
+    // localStorage.setItem('token', JSON.stringify(result));
+    localStorage.setItem('currentUser', JSON.stringify(form));
   }
 
   const handleChange = (e) => {

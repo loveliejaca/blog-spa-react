@@ -11,6 +11,9 @@ import Breadcrumbs from '../Breadcrumbs';
 import Comment from './Comment';
 import '../../assets/css/post.css';
 
+import _ from 'lodash';
+
+
 // API
 import PostApi from '../../http/api/post';
 // import UserApi from '../../http/api/user';
@@ -27,20 +30,36 @@ function PostDetail( props ) {
   const { postData } = reduxPostData;
   const { user } = reduxUserData;
 
+  // const [comment, setComment] =  useState('');
+
   async function fetchData() {
     let result = await PostApi.getPostDetail(postId);
     postActions.postDetailRecieved(result);
+
+    console.log("fetchData", result);
+  }
+
+  async function addComment(comment) {
+    await PostApi.addComment(postId, comment);
+
+    return true;
   }
 
   useEffect(() => {
     fetchData();
-  },[postData]);
+  }, []);
 
 
   const handleClick = () => {
     history.push(`/post/${postId}/edit`);
-    console.log("crash", props);
-    // setEditStatus(!editStatus)
+	}
+
+  const handleSubmitComment = async (comment) => {
+    let temp = _.cloneDeep(postData);
+    await addComment(comment);
+
+    temp.comments.unshift({content: comment, createAt: moment().format() })
+    postActions.postDetailRecieved(temp);
 	}
 
 
@@ -80,7 +99,7 @@ function PostDetail( props ) {
           </div>
         </div>
 
-        <Comment commentList={postData.comments} postId= {postId}/>
+        <Comment commentList={postData.comments} handleSubmitComment={handleSubmitComment}/>
       </div>
     </React.Fragment>
   )
