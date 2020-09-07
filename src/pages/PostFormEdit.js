@@ -96,14 +96,11 @@ function PostFormEdit(props) {
     postActions.postCreatedRecieved(result);
 
 		history.push(`/post/${postId}`)
-
-		console.log("updatePost --------", postData, result);
   }
 
 	const handleSubmitPost = (e) => {
     e.preventDefault();
 		updatePost()
-    console.log("save post");
   };
 
   const handleCancelPost = (e) => {

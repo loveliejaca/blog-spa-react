@@ -3,7 +3,6 @@ import { client } from '../../../utils/apollo';
 
 const UserApi = {
   registerUser: async (email, password) => {
-    console.log("email", email, password);
     let result =  await client.mutate({
       mutation: gql`
         mutation register($email: String!, $password: String!) {
@@ -20,7 +19,6 @@ const UserApi = {
   },
 
   authenticateUser: async (email, password) => {
-    console.log("email", email, password);
     let result =  await client.mutate({
       mutation: gql`
         mutation authenticate($email: String!, $password: String!) {

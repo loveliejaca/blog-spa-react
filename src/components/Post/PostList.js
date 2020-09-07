@@ -17,9 +17,6 @@ import userActions from '../../store/actions/userActions';
 
 
 function PostList( props ) {
-  //
-  // console.log("clientel", client);
-
   const { postActions, reduxPostData, reduxUserData, history } = props;
   const { postList } = reduxPostData;
   const { isLoggedIn } = reduxUserData;

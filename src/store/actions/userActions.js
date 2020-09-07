@@ -10,7 +10,6 @@ const User = {
   },
 
   authLogout: (status) => {
-    console.log("authLogout", status);
     return { type: types.AUTH_LOGOUT , status};
   },
 }

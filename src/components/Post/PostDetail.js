@@ -24,7 +24,8 @@ import userActions from '../../store/actions/userActions';
 function PostDetail( props ) {
   const {history} = props;
   const postId = props.match.params.id;
-  const {postActions, reduxPostData} = props;
+  const {postActions, reduxPostData, reduxUserData} = props;
+  const {isLoggedIn } = reduxUserData;
   const { postData } = reduxPostData;
 
   async function fetchData() {
@@ -54,7 +55,6 @@ function PostDetail( props ) {
 
     temp.comments.unshift({content: comment, createAt: moment().format() })
     postActions.postDetailRecieved(temp);
-    console.log("comment", temp);
 	}
 
 
@@ -68,10 +68,11 @@ function PostDetail( props ) {
       <div className="subpage l-container">
         <div className="post">
           <div className="post__btn">
-            <div className="btn-post btn-post--edit" onClick={handleClick}>
-              <span>Edit Post</span>
-            </div>
-
+            {isLoggedIn &&
+              <div className="btn-post btn-post--edit" onClick={handleClick}>
+                <span>Edit Post</span>
+              </div>
+            }
           </div>
 
           <time

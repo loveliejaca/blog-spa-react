@@ -36,9 +36,7 @@ function Header( props ) {
 		}
 	}
 	const handleClickLogout = () => {
-		console.log("userActions", userActions);
 		userActions.authLogout(false);
-		console.log("logout", isLoggedIn);
 		setShowLogin(false);
 	}
 

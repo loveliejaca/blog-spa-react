@@ -112,8 +112,6 @@ const PostApi = {
   },
 
   updatePost: async (post) => {
-    console.log("post", post.id);
-
     let result = await client.mutate({
       mutation: gql`
         mutation ($post: PostInput) {
@@ -142,7 +140,6 @@ const PostApi = {
       }
     })
 
-    console.log("crash", result);
     let data = result.data ? result.data.updatePost : null;
     return data;
   }

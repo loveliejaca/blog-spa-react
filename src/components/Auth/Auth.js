@@ -9,9 +9,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-// // API
-// import UserApi from '../../http/api/user';
-// settingActions
 import userActions from '../../store/actions/userActions';
 
 function Auth(props) {
@@ -34,7 +31,6 @@ function Auth(props) {
     setIsLogin(!isLogin)
   }
 
-  console.log("user", user);
 
   return (
     <div className="auth">
