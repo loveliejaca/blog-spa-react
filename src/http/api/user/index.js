@@ -1,4 +1,4 @@
-import ApolloClient, { gql } from 'apollo-boost';
+import { gql } from 'apollo-boost';
 import { client } from '../../../utils/apollo';
 
 const UserApi = {
@@ -32,7 +32,6 @@ const UserApi = {
         password: password
       }
     })
-    console.log("result", result);
     let data = result.data ? result.data.authenticate : null;
     return data;
   }

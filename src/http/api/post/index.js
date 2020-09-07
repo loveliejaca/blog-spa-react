@@ -1,5 +1,4 @@
-import ApolloClient, { gql } from 'apollo-boost';
-import { useQuery } from '@apollo/client';
+import { gql } from 'apollo-boost';
 import { client } from '../../../utils/apollo';
 
 
@@ -33,7 +32,7 @@ const PostApi = {
   },
 
   getPostDetail: async (postId) => {
-    console.log("postId", postId);
+
     let result = await client.query({
       query: gql`
         query post($id: Int!) {
@@ -80,33 +79,72 @@ const PostApi = {
     return data;
   },
 
-  createPost: async (data) => {
-    console.log("data", data);
-
+  createPost: async (post) => {
     let result = await client.mutate({
       mutation: gql`
-        mutation addPost($post: PostInput) {
+        mutation ($post: PostInput) {
           addPost(post: $post) {
-            title,
-            content,
-            image,
-            createdAt,
-            comments
+            id
+            title
+            content
+            image
+            createdAt
+            comments {
+              id
+              postId
+              content
+              createdAt
+            }
           }
         }
       `,
       variables: {
         "post" : {
-          "title" : data.title,
-          "content" : data.content,
-          "image" : data.image
+          "title" : post.title,
+          "content" : post.content,
+          "image" : post.image
+        }
+      }
+    })
+
+    let data = result.data ? result.data.addPost : null;
+    return data;
+  },
+
+  updatePost: async (post) => {
+    console.log("post", post.id);
+
+    let result = await client.mutate({
+      mutation: gql`
+        mutation ($post: PostInput) {
+          updatePost(post: $post) {
+            id
+            title
+            content
+            image
+            createdAt
+            comments {
+              id
+              postId
+              content
+              createdAt
+            }
+          }
+        }
+      `,
+      variables: {
+        "post" : {
+          "id": parseInt(post.id),
+          "title" : post.title,
+          "content" : post.content,
+          "image" : post.image
         }
       }
     })
 
     console.log("crash", result);
-    // let data = result.data ? result.data.addComment : null;
-    return result;
+    let data = result.data ? result.data.updatePost : null;
+    return data;
   }
 }
 export default PostApi;

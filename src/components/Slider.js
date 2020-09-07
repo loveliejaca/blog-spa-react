@@ -1,34 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import '../assets/css/slider.css';
-const slides = [
-	{
-		slide: require('../assets/images/slider/slider1.jpg'),
-		text: '<span>サンプルテキスト</span><span>サンプル ルテキスト</span><span>サンプルテキスト</span>'
-	},
-	{
-		slide: require('../assets/images/slider/slider2.jpg'),
-		text: '<span>サンプルテキスト</span><span>サンプル ルテキスト</span><span>サンプルテキスト</span>'
-	},
-	{
-		slide: require('../assets/images/slider/slider3.jpg'),
-		text: '<span>サンプルテキスト</span><span>サンプル ルテキスト</span><span>サンプルテキスト</span>'
-	},
-	{
-		slide: require('../assets/images/slider/slider4.jpg'),
-		text: '<span>サンプルテキスト</span><span>サンプル ルテキスト</span><span>サンプルテキスト</span>'
-	}
-];
+
+import { withRouter } from "react-router-dom";
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+
+import { postDate } from "../utils/helpers.js";
+
+// settingActions
+import postActions from './../store/actions/postActions';
+
+
 function Slider( props ) {
+	const {reduxPostData } = props;
+	const { postList } = reduxPostData;
+	const slides = postList.slice(0, 3);
+
+	const noImage = require('../assets/images/no-image.png');
 
 	const [activeSlide, setActiveSlide] = useState(0);
 	const [prevSlide, setPrevSlide] = useState(4);
 	const [nextSlide, setNextSlide] = useState(1);
-	const [direction, setDirection] = useState('left');
 
-	const maxSlides =  slides.length
+	const maxSlides =  3;
 	let timerId = null;
 
-let counter = 0;
 	const setSliderStyles = () => {
 		const transition =  activeSlide * - window.innerWidth;
 		return {
@@ -40,7 +37,7 @@ let counter = 0;
 		timerId = setInterval(() => {
       handleNextSlide();
 			setSliderStyles()
-    },4 * 1000);
+    },3 * 1000);
 
 		// returned function will be called on component unmount
 		return () => {
@@ -59,6 +56,7 @@ let counter = 0;
 
   const handleNextSlide = () => {
     let slide = activeSlide < maxSlides - 1 ? activeSlide + 1 : 0;
+
 		setActiveSlide(slide)
   }
 
@@ -78,9 +76,19 @@ let counter = 0;
 				<ul className="slider__list" style={setSliderStyles()}>
 					{slides.map((slide, index) => (
 						<li className={`slider__item ${index === activeSlide? 'is-active' : ''} ${index === prevSlide ? 'is-prev-slide' : ''} ${index === nextSlide ? 'is-next-slide' : ''}`} key={index}>
-							<div className="slider__img" style={{  backgroundImage: `url(${slide.slide})`}}>
+							<div className={`slider__img ${slide.image? '' : 'is-noimage' }`} style={{  backgroundImage: `url(${slide.image? slide.image : noImage })`}}>
 							</div>
-							<div className="slider__txt" dangerouslySetInnerHTML={{ __html:slide.text }} />
+							<div className="slider__txt">
+								<span  dangerouslySetInnerHTML={{ __html:slide.title }} />
+
+								<time
+									dateTime={postDate(slide.createdAt)}
+									className="slider__time"
+									>
+									{postDate(slide.createdAt)}
+								</time>
+							</div>
+
 						</li>
 					))}
 				</ul>
@@ -100,4 +108,22 @@ let counter = 0;
 	)
 }
 
-export default Slider;
+// export default Slider;
+// export default withRouter(PostList);
+Slider.propTypes = {
+  postActions: PropTypes.object.isRequired
+};
+
+function mapStateToProps(state, ownProps) {
+  return {
+    reduxPostData: state.reduxPostData
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    postActions: bindActionCreators(postActions, dispatch)
+  };
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Slider));

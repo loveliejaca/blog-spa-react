@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams} from "react-router-dom";
 import '../assets/css/post.css';
 
 // import { useUtils } from "../hooks/useUtils.js";
@@ -18,21 +19,40 @@ import PostApi from '../http/api/post';
 import postActions from '../store/actions/postActions';
 import userActions from '../store/actions/userActions';
 
-function PostForm(props) {
+function PostFormEdit(props) {
 
-	const {postActions, history} = props;
-	// const { _scrollLock } = useUtils();
-	const [image, setImage] = useState(null);
+	const {postActions, reduxPostData, history} = props;
+  const { postData } = reduxPostData;
 
-	const formActionPage = "Create New Post";
-
-
-	const [isTitleEmpty, setIsTitleEmpty] = useState(false);
+	const params = useParams();
+	const postId = params.id;
 
 	const [formPost, setFormPost] = useState({
     title: "",
-    content: ""
+    content: "",
+    image: ""
   });
+
+	const [image, setImage] = useState(null);
+	const [isTitleEmpty, setIsTitleEmpty] = useState(false);
+
+	async function fetchData() {
+		if(!postId) return;
+		let result = await PostApi.getPostDetail(postId);
+		postActions.postDetailRecieved(result);
+
+		if(postData) {
+			setFormPost({
+				title: postData.title,
+				content: postData.content
+			});
+			setImage(postData.image);
+		}
+	}
+
+	useEffect(() => {
+    fetchData();
+  },[]);
 
 
 	const handleShowErrorTite = isTitleEmpty ? (
@@ -65,30 +85,34 @@ function PostForm(props) {
 		}
 	};
 
-	async function createPost() {
+	async function updatePost() {
 		let data = {
+			id: postId,
 			title: formPost.title,
 			content: formPost.content,
 			image: image
 		}
-    let result = await PostApi.createPost(data);
+    let result = await PostApi.updatePost(data);
     postActions.postCreatedRecieved(result);
 
-		history.push('/');
+		history.push(`/post/${postId}`)
+
+		console.log("updatePost --------", postData, result);
   }
 
 	const handleSubmitPost = (e) => {
     e.preventDefault();
-		createPost()
+		updatePost()
+    console.log("save post");
   };
 
   const handleCancelPost = (e) => {
     e.preventDefault();
   	setFormPost({
-			title: "",
-	    content: "",
-	    image: ""
+			title: '',
+	    content: ''
 		})
+		setImage('');
   };
 
 	const ImgUpload = ({ onChange, src, }) => {
@@ -113,7 +137,7 @@ function PostForm(props) {
 
 	return (
 		<Layout>
-			<Breadcrumbs currentPage={formActionPage}/>
+			<Breadcrumbs currentPage={formPost.title}/>
 			<div className="subpage l-container">
 				<div className="post post--form">
 					<form className="post__form" onSubmit={handleSubmitPost}>
@@ -130,8 +154,8 @@ function PostForm(props) {
 						</div>
 
 						<div className="post__body-container">
-							<time dateTime={postDate()} className="post__date">
-                {postDate()}
+							<time dateTime={postData ? postDate(postData.createdAt) : postDate()} className="post__date">
+                {postData ? postDate(postData.createdAt) : postDate()}
               </time>
 
 							<div className="post__title">
@@ -170,7 +194,7 @@ function PostForm(props) {
 }
 
 
-PostForm.propTypes = {
+PostFormEdit.propTypes = {
 	postActions: PropTypes.object.isRequired,
   userActions: PropTypes.object.isRequired
 };
@@ -190,4 +214,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PostForm);
+export default connect(mapStateToProps, mapDispatchToProps)(PostFormEdit);

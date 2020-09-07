@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import '../../assets/css/post-list.css';
 import { withRouter } from "react-router-dom";
 import moment from 'moment'
@@ -22,7 +22,7 @@ function PostList( props ) {
 
   const { postActions, reduxPostData, reduxUserData, history } = props;
   const { postList } = reduxPostData;
-  const { user } = reduxUserData;
+  const { isLoggedIn } = reduxUserData;
 
   async function fetchData(offset) {
     let list = await PostApi.getPosts(offset);
@@ -37,13 +37,13 @@ function PostList( props ) {
 
 	useEffect(() => {
     fetchData(0);
-  }, []);
+  }, [isLoggedIn]);
 
 	const onRouteChange = (postId) => {
     if(postId) {
       history.push(`/post/${postId}`);
     } else {
-      history.push(`/create-new-post`);
+      history.push(`/create-post`);
     }
 	}
 
@@ -77,7 +77,7 @@ function PostList( props ) {
 		<div className="post">
 			<div className="post__head">
 				<h2 className="post__head-title">NEWS</h2>
-        {user && (
+        {isLoggedIn && (
           <div className="btn-post btn-post--create" onClick={() => onRouteChange('')}>
   					<span>Create New Post</span>
   				</div>

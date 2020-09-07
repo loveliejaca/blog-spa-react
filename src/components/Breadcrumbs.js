@@ -1,6 +1,5 @@
 import React from 'react';
 import '../assets/css/breadcrumbs.css';
-import { Link } from "react-router-dom";
 
 function Breadcrumbs( props ) {
 	const currentPage = props.currentPage;

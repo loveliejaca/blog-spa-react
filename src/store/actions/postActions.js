@@ -14,7 +14,11 @@ const Posts = {
   },
 
   postCreatedRecieved: (data) => {
-    return { type: types.POST_CREATED, data: data};
+    return { type: types.POST_CREATE, data: data};
+  },
+
+  postUpdatedRecieved: (data) => {
+    return { type: types.POST_UPDATE, data: data};
   }
 
 }

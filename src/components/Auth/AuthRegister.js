@@ -18,8 +18,7 @@ function AuthRegister( props ) {
   const [isMatch, setIsMatch] = useState(true);
   const [isEmpty, setIsEmpty] = useState(false);
 
-  const {userActions, reduxUserData, handleClick} = props;
-  const { user } = reduxUserData;
+  const {userActions, handleClick} = props;
 
   let userList = JSON.parse(localStorage.getItem('users')) || [];
 

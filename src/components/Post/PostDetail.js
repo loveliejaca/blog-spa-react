@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { withRouter } from "react-router-dom";
 import moment from 'moment'
 import { bindActionCreators } from 'redux';
@@ -16,27 +16,20 @@ import _ from 'lodash';
 
 // API
 import PostApi from '../../http/api/post';
-// import UserApi from '../../http/api/user';
 
 // settingActions
 import postActions from '../../store/actions/postActions';
 import userActions from '../../store/actions/userActions';
 
 function PostDetail( props ) {
-  const [editStatus, setEditStatus] = useState(null);
   const {history} = props;
   const postId = props.match.params.id;
-  const {postActions, reduxPostData, reduxUserData} = props;
+  const {postActions, reduxPostData} = props;
   const { postData } = reduxPostData;
-  const { user } = reduxUserData;
-
-  // const [comment, setComment] =  useState('');
 
   async function fetchData() {
     let result = await PostApi.getPostDetail(postId);
     postActions.postDetailRecieved(result);
-
-    console.log("fetchData", result);
   }
 
   async function addComment(comment) {
@@ -58,8 +51,10 @@ function PostDetail( props ) {
     let temp = _.cloneDeep(postData);
     await addComment(comment);
 
+
     temp.comments.unshift({content: comment, createAt: moment().format() })
     postActions.postDetailRecieved(temp);
+    console.log("comment", temp);
 	}
 
 

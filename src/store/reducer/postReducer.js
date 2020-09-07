@@ -23,6 +23,16 @@ const fieldTypeReducer = (state = initialState, action) => {
         ...state,
         postComments: action.data,
       };
+    case types.POST_CREATE:
+      return {
+        ...state,
+        postData: action.data,
+      };
+    case types.POST_UPDATE:
+      return {
+        ...state,
+        postData: action.data,
+      };
     default:
       return state;
   }

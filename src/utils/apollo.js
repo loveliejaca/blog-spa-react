@@ -10,7 +10,7 @@ const GRAPHQL_URI = process.env.REACT_APP_GRAPHQL_URI;
 const authLink = setContext((_, { headers }) => {
   const token = JSON.parse(localStorage.getItem('token'));
 
-  const authorizationHeader = token ? `Bearer ${token}` : null
+  const authorizationHeader = token ? `${token}` : null
 
   // const authorizationHeader = token ? `Bearer ${token.access_token}` : null
   return {

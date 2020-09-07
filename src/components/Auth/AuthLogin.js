@@ -15,22 +15,20 @@ function AuthLogin( props ) {
   });
 
   const [isEmpty, setIsEmpty] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-  const {userActions, reduxUserData, handleClick} = props;
-  const { user } = reduxUserData;
-
-  console.log("crash", localStorage.getItem('currentUser'));
-
-  // let token = JSON.parse(localStorage.getItem('token')) || '';
-  let currentUser = JSON.parse(localStorage.getItem('currentUser')) || '';
-
+  const {userActions, handleClick} = props;
 
   async function authenticate() {
     let result = await UserApi.authenticateUser(form.email, form.password);
-    userActions.userLogin(result);
+    userActions.authLogin(result);
 
-    // localStorage.setItem('token', JSON.stringify(result));
-    localStorage.setItem('currentUser', JSON.stringify(form));
+    if(result) {
+      localStorage.setItem('currentUser', JSON.stringify(form));
+      setForm({email: '', password: ''})
+    } else {
+      setIsError(true);
+    }
   }
 
   const handleChange = (e) => {
@@ -52,7 +50,6 @@ function AuthLogin( props ) {
     }
 
     authenticate();
-    setForm({email: '', password: ''})
   }
 
   return (
@@ -62,7 +59,7 @@ function AuthLogin( props ) {
           <label className="auth__lbl">
             Email
           </label>
-          <div className={`auth__form-input ${!form.email && isEmpty && 'is-error'}`}>
+          <div className={`auth__form-input ${!form.email && isEmpty && 'is-error'} ${isError && 'is-error'}`}>
             <input
               type="email"
               id="email"
@@ -80,7 +77,7 @@ function AuthLogin( props ) {
           <label className="auth__lbl">
             password
           </label>
-          <div className={`auth__form-input ${!form.password && isEmpty && 'is-error'}`}>
+          <div className={`auth__form-input ${!form.password && isEmpty && 'is-error'} ${isError && 'is-error'}`}>
             <input
               type="password"
               id="password"
@@ -92,6 +89,10 @@ function AuthLogin( props ) {
           { !form.password && isEmpty &&
             <span className="auth__form-error"> Password is required </span>
           }
+
+          { isError &&
+            <span className="auth__form-error"> Email not registered! </span>
+          }
         </div>
 
         <button className="btn-auth btn-auth--form" type="submit" name="button">
@@ -99,7 +100,7 @@ function AuthLogin( props ) {
         </button>
       </form>
 
-      <p className="auth__form-note">No account yet? <span onClick={handleClick}>REGISTER HERE</span></p>
+      <p className={`auth__form-note ${isError && 'is-animate'}`}>No account yet? <span onClick={handleClick}>REGISTER HERE</span></p>
     </div>
   )
 }

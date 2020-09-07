@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../../assets/css/comment.css';
-import moment from 'moment'
+import TimeAgo from "timeago-react";
 
 function Comment( props ) {
 	const { commentList, postId } = props
 	const [content, setContent] =  useState('')
-
-	console.log("commentList", props);
-
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -21,8 +18,7 @@ function Comment( props ) {
 			<p>{item.content}</p>
 
 			<span className="comment__date">
-				{moment(item.createdAt).format('YYYY-MM-DD, h:mm:ss a')}
-
+				<TimeAgo datetime={item.createdAt} />
 			</span>
 		</li>
 	))
@@ -30,6 +26,12 @@ function Comment( props ) {
 	return (
 		<div className="comment">
 			<h2 className="comment__title">COMMENT</h2>
+
+			{commentList.length > 0 &&
+				<ul className="comment__list">
+					{list}
+				</ul>
+			}
 
 			<form onSubmit={handleSubmit} >
 				<div className="comment__textarea">
@@ -44,12 +46,6 @@ function Comment( props ) {
 					<span> SUBMIT </span>
 				</button>
 			</form>
-
-			{commentList.length > 0 &&
-				<ul className="comment__list">
-					{list}
-				</ul>
-			}
 		</div>
 	)
 }

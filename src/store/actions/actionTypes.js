@@ -1,7 +1,9 @@
 export const POST_LIST_REQUEST = 'POST_LIST_REQUEST'
 export const POST_DETAIL = 'POST_DETAIL'
 export const POST_COMMENTS = 'POST_COMMENTS'
-export const POST_CREATED = 'POST_CREATED'
+export const POST_CREATE = 'POST_CREATE'
+export const POST_UPDATE = 'POST_UPDATE'
 
-export const USER_LOGIN = 'USER_LOGIN'
 export const USER_REGISTER = 'USER_REGISTER'
+export const AUTH_LOGIN = 'AUTH_LOGIN'
+export const AUTH_LOGOUT = 'AUTH_LOGOUT'

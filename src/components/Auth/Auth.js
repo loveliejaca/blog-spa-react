@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import userActions from '../../store/actions/userActions';
 
 function Auth(props) {
-  const {reduxUserData, history} = props;
+  const {reduxUserData} = props;
   const { user } = reduxUserData;
 
   const [isLogin, setIsLogin] = useState(false);

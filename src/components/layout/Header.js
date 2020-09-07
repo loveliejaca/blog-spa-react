@@ -13,27 +13,20 @@ import userActions from '../../store/actions/userActions';
 
 
 function Header( props ) {
-	const {reduxUserData, history} = props;
-  const { user } = reduxUserData;
-
+	const {reduxUserData, userActions, history} = props;
+  const {isLoggedIn } = reduxUserData;
 	const [showLogin, setShowLogin] = useState(false);
-	const [authStatus, setAuthStatus] = useState(false);
-
-	let token = JSON.parse(localStorage.getItem('token')) || '';
-
-	console.log("header --- token", user);
 
 	useEffect(() => {
-    function handleLogin() {
-			console.log("t------------");
-      if(token) {
+		function handleLogin() {
+			if(setShowLogin) {
 				setShowLogin(false);
-				setAuthStatus(true);
 			}
-    }
+		}
 
 		handleLogin();
-  }, [token]);
+	}, [isLoggedIn]);
+
 
 	const handleClick = (type) => {
 		if(type === 'login') {
@@ -43,9 +36,10 @@ function Header( props ) {
 		}
 	}
 	const handleClickLogout = () => {
-		setAuthStatus(false);
-		window.localStorage.removeItem('token');
-		window.localStorage.removeItem('currentUser');
+		console.log("userActions", userActions);
+		userActions.authLogout(false);
+		console.log("logout", isLoggedIn);
+		setShowLogin(false);
 	}
 
 	return (
@@ -55,12 +49,12 @@ function Header( props ) {
 					<div className="header__logo-img" ></div>
 				</div>
 
-				{!authStatus && (
+				{!isLoggedIn && (
 					<div className="btn-auth" onClick={() => handleClick('login')}>
 						<span>{ showLogin ? 'Close' : 'Login'}</span>
 						</div>
 				)}
-				{ authStatus && (
+				{ isLoggedIn && (
 					<div className="btn-auth" onClick={() => handleClickLogout()}>
 						<span>Logout</span>
 					</div>

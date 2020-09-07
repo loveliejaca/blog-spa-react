@@ -76,6 +76,15 @@
   text-decoration: none;
 }
 
+.auth__form-note.is-animate span {
+  animation: register 0.5s infinite;
+}
+
+@keyframes register {
+  from {color: #101010;}
+  to {color: #ff0000;}
+}
+
 .auth__form-note span:hover {
   text-decoration: underline;
 }
