@@ -35,13 +35,12 @@ function PostDetail( props ) {
 
   async function addComment(comment) {
     await PostApi.addComment(postId, comment);
-
     return true;
   }
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [isLoggedIn]);
 
 
   const handleClick = () => {

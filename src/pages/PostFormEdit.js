@@ -7,6 +7,7 @@ import { postDate } from "../utils/helpers.js";
 
 import Layout from '../components/layout/Layout';
 import Breadcrumbs from '../components/Breadcrumbs';
+import Modal from '../components/Modal';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -33,14 +34,22 @@ function PostFormEdit(props) {
     image: ""
   });
 
+	console.log("postId", postId);
+
 	const [image, setImage] = useState(null);
 	const [isTitleEmpty, setIsTitleEmpty] = useState(false);
+	const [isShowModal, setIsShowModal] = useState(false);
 
 	async function fetchData() {
-		if(!postId) return;
 		let result = await PostApi.getPostDetail(postId);
 		postActions.postDetailRecieved(result);
+	}
 
+	useEffect(() => {
+    fetchData();
+  },[]);
+
+	useEffect(() => {
 		if(postData) {
 			setFormPost({
 				title: postData.title,
@@ -48,15 +57,11 @@ function PostFormEdit(props) {
 			});
 			setImage(postData.image);
 		}
-	}
-
-	useEffect(() => {
-    fetchData();
-  },[]);
+  },[postData]);
 
 
 	const handleShowErrorTite = isTitleEmpty ? (
-    <p className="post-form-title-error">Title must not be empty.</p>
+    <p className="error-txt">Title must not be empty.</p>
   ) : (
     ""
   );
@@ -100,17 +105,29 @@ function PostFormEdit(props) {
 
 	const handleSubmitPost = (e) => {
     e.preventDefault();
-		updatePost()
+		const {id, title, content } = formPost;
+
+		if (title && !isTitleEmpty) {
+			updatePost()
+		} else {
+			setIsTitleEmpty(true);
+		}
   };
 
   const handleCancelPost = (e) => {
     e.preventDefault();
-  	setFormPost({
-			title: '',
-	    content: ''
-		})
-		setImage('');
+		setIsShowModal(true);
   };
+
+	const handleModalClose = () => {
+    setIsShowModal(false);
+  };
+
+	const handleModalOk = () => {
+    setIsShowModal(false);
+    history.push(`/post/${postId}`);
+  };
+
 
 	const ImgUpload = ({ onChange, src, }) => {
     return (
@@ -135,6 +152,11 @@ function PostFormEdit(props) {
 	return (
 		<Layout>
 			<Breadcrumbs currentPage={formPost.title}/>
+			<Modal
+				onShow={isShowModal}
+        onClose={handleModalClose}
+        onOk={handleModalOk}
+			/>
 			<div className="subpage l-container">
 				<div className="post post--form">
 					<form className="post__form" onSubmit={handleSubmitPost}>
@@ -155,7 +177,7 @@ function PostFormEdit(props) {
                 {postData ? postDate(postData.createdAt) : postDate()}
               </time>
 
-							<div className="post__title">
+							<div className={`post__title ${isTitleEmpty && 'is-error'}`}>
 								<textarea
 									id="title"
 									className="post-form-title-textarea"
@@ -163,9 +185,9 @@ function PostFormEdit(props) {
 									onChange={handleUpdateField}
 									value={formPost.title}
 								/>
+							{handleShowErrorTite}
 							</div>
 
-							{handleShowErrorTite}
 
 							<div className="post__featured">
 								<div className="post__featured-img" style={{ backgroundImage: `url(${image})` }}></div>

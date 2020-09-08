@@ -6,6 +6,7 @@ import { postDate } from "../utils/helpers.js";
 
 import Layout from '../components/layout/Layout';
 import Breadcrumbs from '../components/Breadcrumbs';
+import Modal from '../components/Modal';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -26,9 +27,8 @@ function PostForm(props) {
 
 	const formActionPage = "Create New Post";
 
-
 	const [isTitleEmpty, setIsTitleEmpty] = useState(false);
-
+	const [isShowModal, setIsShowModal] = useState(false);
 	const [formPost, setFormPost] = useState({
     title: "",
     content: ""
@@ -36,7 +36,7 @@ function PostForm(props) {
 
 
 	const handleShowErrorTite = isTitleEmpty ? (
-    <p className="post-form-title-error">Title must not be empty.</p>
+    <p className="error-txt">Title must not be empty.</p>
   ) : (
     ""
   );
@@ -79,12 +79,29 @@ function PostForm(props) {
 
 	const handleSubmitPost = (e) => {
     e.preventDefault();
-		createPost()
+		const {title, content } = formPost;
+
+		if (title && !isTitleEmpty) {
+			createPost()
+		} else {
+			setIsTitleEmpty(true);
+		}
   };
 
   const handleCancelPost = (e) => {
     e.preventDefault();
-  	setFormPost({
+
+		setIsShowModal(true);
+  };
+
+	const handleModalClose = () => {
+    setIsShowModal(false);
+  };
+
+	const handleModalOk = () => {
+    setIsShowModal(false);
+    history.push("/");
+		setFormPost({
 			title: "",
 	    content: "",
 	    image: ""
@@ -114,6 +131,11 @@ function PostForm(props) {
 	return (
 		<Layout>
 			<Breadcrumbs currentPage={formActionPage}/>
+			<Modal
+				onShow={isShowModal}
+        onClose={handleModalClose}
+        onOk={handleModalOk}
+			/>
 			<div className="subpage l-container">
 				<div className="post post--form">
 					<form className="post__form" onSubmit={handleSubmitPost}>
@@ -134,7 +156,7 @@ function PostForm(props) {
                 {postDate()}
               </time>
 
-							<div className="post__title">
+							<div className={`post__title ${isTitleEmpty && 'is-error'}`}>
 								<textarea
 									id="title"
 									className="post-form-title-textarea"
@@ -142,9 +164,9 @@ function PostForm(props) {
 									onChange={handleUpdateField}
 									value={formPost.title}
 								/>
+							{handleShowErrorTite}
 							</div>
 
-							{handleShowErrorTite}
 
 							<div className="post__featured">
 								<div className="post__featured-img" style={{ backgroundImage: `url(${image})` }}></div>

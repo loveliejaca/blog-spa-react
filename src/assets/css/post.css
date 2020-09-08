@@ -53,6 +53,11 @@
   width: 100%;
 }
 
+.post__title.is-error textarea {
+  border-color: #ff0000;
+  box-shadow: 0 0 5px -1px #d47a78;
+}
+
 .post__featured {
   margin-bottom: 50px;
   position: relative;
@@ -131,4 +136,11 @@
 .post__upload-input {
   position: absolute;
   opacity: 0;
+}
+
+.error-txt {
+  display: block;
+  color: #ff0000;
+  margin: 5px 0 10px;
+  font-size: 15px;
 }

@@ -5,32 +5,15 @@ import AuthLogin from './AuthLogin';
 import AuthRegister from './AuthRegister';
 import "../../assets/css/auth.css";
 
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
-import userActions from '../../store/actions/userActions';
 
 function Auth(props) {
-  const {reduxUserData} = props;
-  const { user } = reduxUserData;
 
   const [isLogin, setIsLogin] = useState(false);
-
-  useEffect(() => {
-    function handleLogin() {
-      if(user) {
-				setIsLogin(false);
-			}
-    }
-
-		handleLogin();
-  }, [user]);
 
   const handleClick = () => {
     setIsLogin(!isLogin)
   }
-
 
   return (
     <div className="auth">
@@ -42,21 +25,4 @@ function Auth(props) {
     </div>
   );
 }
-Auth.propTypes = {
-  userActions: PropTypes.object.isRequired
-};
-
-
-function mapStateToProps(state, ownProps) {
-  return {
-    reduxUserData: state.reduxUserData
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    userActions: bindActionCreators(userActions, dispatch)
-  };
-}
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Auth));
+export default Auth;
