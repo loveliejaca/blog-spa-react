@@ -9,7 +9,7 @@
     "graphql": "^14.7.0",
     "nodemon": "^1.19.1",
     "sequelize": "^5.9.0",
-    "sqlite3": "^4.0.9"
+    "sqlite3": "^4.2.0"
   },
   "devDependencies": {},
   "scripts": {
