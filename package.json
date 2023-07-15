@@ -14,7 +14,7 @@
     "apollo-link-context": "^1.0.20",
     "apollo-upload-client": "^13.0.0",
     "axios": "^0.19.2",
-    "battlecry": "^0.3.6",
+    "battlecry": "^1.0.0",
     "browserslist": "^4.14.0",
     "fibers": "^3.1.0",
     "graphql": "^15.1.0",
